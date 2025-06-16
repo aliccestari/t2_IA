@@ -4,7 +4,7 @@ import json, time, os
 
 if __name__ == "__main__":
     config = {
-        "population_size": 100,
+        "population_size": 50,
         "max_generations": 5,
         "neural_network": {"hidden_size": 9},
         "genetic_algorithm": {
@@ -14,7 +14,7 @@ if __name__ == "__main__":
         },
         # ordem de dificuldades e nº de gerações em cada uma
         "training_schedule": ["easy", "medium", "hard"],
-        "generations_per_difficulty": [10, 15, 100],
+        "generations_per_difficulty": [2, 2, 1],
     }
 
     trainer = Trainer(config)
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     print("Pesos do melhor cromossomo salvos em checkpoints/best_chromosome_*.npy")
 
     # avalia a rede treinada
-    trainer.test_final_performance(num_test_games=10)
+    trainer.test_final_performance(num_test_games=5)
