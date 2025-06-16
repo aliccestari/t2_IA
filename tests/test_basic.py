@@ -68,5 +68,23 @@ class TestNeuralNetwork(unittest.TestCase):
         """Testa definição de pesos"""
         pass
 
+def test_x_wins():
+    game = TicTacToe()
+    moves = [0, 3, 1, 4, 2]  # X vence
+    for i, pos in enumerate(moves):
+        player = 1 if i % 2 == 0 else -1
+        assert game.make_move(pos, player)
+    assert game.winner == 1
+    assert game.is_game_over()
+
+def test_draw():
+    game = TicTacToe()
+    moves = [0, 1, 2, 4, 3, 5, 7, 6, 8]  # Empate
+    for i, pos in enumerate(moves):
+        player = 1 if i % 2 == 0 else -1
+        assert game.make_move(pos, player)
+    assert game.winner == 0
+    assert game.is_game_over()
+
 if __name__ == '__main__':
     unittest.main() 

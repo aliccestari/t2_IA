@@ -28,13 +28,44 @@ class MinimaxPlayer:
     
     def get_move(self, board_state):
         """
-        Retorna a próxima jogada baseada na dificuldade
+        Retorna a próxima jogada baseada na dificuldade.
+
+        Dependendo da dificuldade configurada, o jogador utiliza o algoritmo
+        minimax em uma determinada porcentagem das vezes. Caso o minimax não
+        seja utilizado, uma jogada aleatória válida é retornada.
+
         Args:
-            board_state: estado atual do tabuleiro
+            board_state: estado atual do tabuleiro como lista/array de tamanho 9
+
         Returns:
-            move: posição escolhida (0-8)
+            move: posição escolhida (0-8) ou ``None`` se não houver jogadas
+                disponíveis
         """
-        pass
+
+        available_moves = self.get_available_moves(board_state)
+        if not available_moves:
+            return None
+
+        use_minimax = random.random() < self.minimax_probability.get(
+            self.difficulty, 1.0
+        )
+
+        if not use_minimax:
+            return self.get_random_move(board_state)
+
+        player_val = 1 if self.symbol == 'X' else -1
+        best_score = -float("inf")
+        best_move = None
+
+        for move in available_moves:
+            board_copy = list(board_state)
+            board_copy[move] = player_val
+            score = self.minimax(board_copy, 0, False)
+            if score > best_score:
+                best_score = score
+                best_move = move
+
+        return best_move
     
     def minimax(self, board, depth, is_maximizing, alpha=-float('inf'), beta=float('inf')):
         """
@@ -48,7 +79,36 @@ class MinimaxPlayer:
         Returns:
             score: valor da posição
         """
-        pass
+        player_val = 1 if self.symbol == 'X' else -1
+        result = self.evaluate_board(board)
+
+        if result is not None:
+            # Pontuação já está no ponto de vista do jogador
+            return result
+
+        if is_maximizing:
+            best_score = -float('inf')
+            for move in self.get_available_moves(board):
+                board[move] = player_val
+                score = self.minimax(board, depth + 1, False, alpha, beta)
+                board[move] = 0
+                best_score = max(best_score, score)
+                alpha = max(alpha, best_score)
+                if beta <= alpha:
+                    break
+            return best_score
+        else:
+            opponent_val = -player_val
+            best_score = float('inf')
+            for move in self.get_available_moves(board):
+                board[move] = opponent_val
+                score = self.minimax(board, depth + 1, True, alpha, beta)
+                board[move] = 0
+                best_score = min(best_score, score)
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                    break
+            return best_score
     
     def evaluate_board(self, board):
         """
@@ -58,7 +118,22 @@ class MinimaxPlayer:
         Returns:
             score: pontuação da posição
         """
-        pass
+        win_combinations = [
+            (0, 1, 2), (3, 4, 5), (6, 7, 8),  # linhas
+            (0, 3, 6), (1, 4, 7), (2, 5, 8),  # colunas
+            (0, 4, 8), (2, 4, 6)              # diagonais
+        ]
+
+        player_val = 1 if self.symbol == 'X' else -1
+
+        for a, b, c in win_combinations:
+            if board[a] == board[b] == board[c] != 0:
+                return 1 if board[a] == player_val else -1
+
+        if 0 not in board:
+            return 0
+
+        return None
     
     def get_random_move(self, board_state):
         """
@@ -68,7 +143,8 @@ class MinimaxPlayer:
         Returns:
             move: posição aleatória válida
         """
-        pass
+        moves = self.get_available_moves(board_state)
+        return random.choice(moves) if moves else None
     
     def get_available_moves(self, board_state):
         """
@@ -78,7 +154,7 @@ class MinimaxPlayer:
         Returns:
             moves: lista de posições disponíveis
         """
-        pass
+        return [i for i, v in enumerate(board_state) if v == 0]
     
     def set_difficulty(self, difficulty):
         """
@@ -86,4 +162,6 @@ class MinimaxPlayer:
         Args:
             difficulty: 'easy', 'medium', 'hard'
         """
-        pass 
+        if difficulty not in self.minimax_probability:
+            raise ValueError("Invalid difficulty level")
+        self.difficulty = difficulty
