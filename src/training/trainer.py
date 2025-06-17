@@ -4,7 +4,6 @@ from ..neural_network.mlp import MLP
 from ..genetic_algorithm.genetic_algo import GeneticAlgorithm
 from ..minimax.minimax import MinimaxPlayer
 from ..game.tic_tac_toe import TicTacToe
-from ..game.game_state import GameState, GameResult
 
 class Trainer:
     """
@@ -13,11 +12,6 @@ class Trainer:
     """
     
     def __init__(self, config=None):
-        """
-        Inicializa o sistema de treinamento
-        Args:
-            config: dicionário com configurações
-        """
         # Configurações padrão
         self.config = config or {
             'population_size': 100 ,
@@ -62,9 +56,6 @@ class Trainer:
         self.minimax_player = MinimaxPlayer(difficulty='easy', symbol='O')
     
     def train(self):
-        """
-        Executa o treinamento completo da rede neural
-        """
         self.initialize_components()
         schedule = self.config['training_schedule']
         generations_per_difficulty = self.config.get('generations_per_difficulty', [30, 30, 40])
@@ -76,12 +67,6 @@ class Trainer:
         self.plot_training_progress()
     
     def train_with_difficulty(self, difficulty, generations):
-        """
-        Treina a rede com uma dificuldade específica do minimax
-        Args:
-            difficulty: 'easy', 'medium', 'hard'
-            generations: número de gerações para esta dificuldade
-        """
         self.minimax_player.set_difficulty(difficulty)
         for gen in range(generations):
             self.genetic_algorithm.evolve_generation(
@@ -95,13 +80,6 @@ class Trainer:
             print(f"Geração {stats['generation']}: Melhor fitness = {stats['best_fitness']:.2f}, Média = {stats['mean_fitness']:.2f}")
     
     def play_training_match(self, chromosome):
-        """
-        Executa uma partida de treinamento entre rede neural e minimax
-        Args:
-            chromosome: pesos da rede neural
-        Returns:
-            game_result: resultado da partida
-        """
         self.game.reset_game()
         self.neural_network.set_weights_from_chromosome(chromosome)
         current_player = 1
@@ -116,14 +94,6 @@ class Trainer:
         return self.game.winner
 
     def evaluate_neural_network(self, chromosome, num_games=10):
-        """
-        Avalia desempenho da rede neural jogando múltiplas partidas
-        Args:
-            chromosome: pesos da rede neural
-            num_games: número de jogos para avaliação
-        Returns:
-            fitness_score: pontuação de aptidão
-        """
         results = []
         for _ in range(num_games):
             result = self.play_training_match(chromosome)
@@ -131,13 +101,6 @@ class Trainer:
         return self.calculate_fitness_score(results)
 
     def calculate_fitness_score(self, game_results):
-        """
-        Calcula pontuação de aptidão baseada nos resultados dos jogos
-        Args:
-            game_results: lista de resultados dos jogos
-        Returns:
-            fitness: valor de aptidão
-        """
         WIN_REWARD = 15
         DRAW_REWARD = 3
         LOSS_PENALTY = -2
@@ -152,17 +115,10 @@ class Trainer:
         return fitness / len(game_results) if game_results else 0
 
     def save_training_progress(self, generation, stats):
-        """
-        Salva progresso do treinamento
-        Args:
-            generation: geração atual
-            stats: estatísticas da geração
-        """
         self.training_history.append(stats)  # Adiciona as estatísticas à lista
         print(f"[Progresso] Geração {generation}: {stats}")
 
     def plot_training_progress(self):
-        """Plota gráficos do progresso do treinamento"""
         if not self.training_history:
             print("Nenhum dado de treinamento para plotar.")
             return
@@ -179,11 +135,6 @@ class Trainer:
         plt.show()
 
     def get_best_neural_network(self):
-        """
-        Retorna a melhor rede neural treinada
-        Returns:
-            neural_network: rede neural com melhores pesos
-        """
         if self.genetic_algorithm is None or not hasattr(self.genetic_algorithm, 'population') or not self.genetic_algorithm.population:
             raise RuntimeError("A população genética não foi inicializada. Rode o treinamento antes de testar a performance final.")
         best_chromosome = self.genetic_algorithm.get_best_chromosome()
@@ -191,13 +142,6 @@ class Trainer:
         return self.neural_network
     
     def test_final_performance(self, num_test_games=100):
-        """
-        Testa performance final da rede neural treinada
-        Args:
-            num_test_games: número de jogos de teste
-        Returns:
-            results: resultados dos testes
-        """
         # Garante que os componentes estejam inicializados
         if self.game is None or self.minimax_player is None or self.neural_network is None or self.genetic_algorithm is None:
             self.initialize_components()

@@ -9,12 +9,6 @@ class MinimaxPlayer:
     """
     
     def __init__(self, difficulty='hard', symbol='O'):
-        """
-        Inicializa o jogador Minimax
-        Args:
-            difficulty: 'easy', 'medium', 'hard'
-            symbol: símbolo do jogador ('X' ou 'O')
-        """
         self.difficulty = difficulty
         self.symbol = symbol
         self.opponent_symbol = 'X' if symbol == 'O' else 'O'
@@ -27,21 +21,6 @@ class MinimaxPlayer:
         }
     
     def get_move(self, board_state):
-        """
-        Retorna a próxima jogada baseada na dificuldade.
-
-        Dependendo da dificuldade configurada, o jogador utiliza o algoritmo
-        minimax em uma determinada porcentagem das vezes. Caso o minimax não
-        seja utilizado, uma jogada aleatória válida é retornada.
-
-        Args:
-            board_state: estado atual do tabuleiro como lista/array de tamanho 9
-
-        Returns:
-            move: posição escolhida (0-8) ou ``None`` se não houver jogadas
-                disponíveis
-        """
-
         available_moves = self.get_available_moves(board_state)
         if not available_moves:
             return None
@@ -68,17 +47,6 @@ class MinimaxPlayer:
         return best_move
     
     def minimax(self, board, depth, is_maximizing, alpha=-float('inf'), beta=float('inf')):
-        """
-        Algoritmo Minimax com poda alfa-beta
-        Args:
-            board: estado do tabuleiro
-            depth: profundidade atual
-            is_maximizing: se é turno do maximizador
-            alpha: valor alfa para poda
-            beta: valor beta para poda
-        Returns:
-            score: valor da posição
-        """
         player_val = 1 if self.symbol == 'X' else -1
         result = self.evaluate_board(board)
 
@@ -111,13 +79,6 @@ class MinimaxPlayer:
             return best_score
     
     def evaluate_board(self, board):
-        """
-        Avalia o estado atual do tabuleiro
-        Args:
-            board: estado do tabuleiro
-        Returns:
-            score: pontuação da posição
-        """
         win_combinations = [
             (0, 1, 2), (3, 4, 5), (6, 7, 8),  # linhas
             (0, 3, 6), (1, 4, 7), (2, 5, 8),  # colunas
@@ -136,32 +97,13 @@ class MinimaxPlayer:
         return None
     
     def get_random_move(self, board_state):
-        """
-        Retorna uma jogada aleatória válida
-        Args:
-            board_state: estado do tabuleiro
-        Returns:
-            move: posição aleatória válida
-        """
         moves = self.get_available_moves(board_state)
         return random.choice(moves) if moves else None
     
     def get_available_moves(self, board_state):
-        """
-        Retorna lista de movimentos válidos
-        Args:
-            board_state: estado do tabuleiro
-        Returns:
-            moves: lista de posições disponíveis
-        """
         return [i for i, v in enumerate(board_state) if v == 0]
     
     def set_difficulty(self, difficulty):
-        """
-        Altera a dificuldade do minimax
-        Args:
-            difficulty: 'easy', 'medium', 'hard'
-        """
         if difficulty not in self.minimax_probability:
             raise ValueError("Invalid difficulty level")
         self.difficulty = difficulty

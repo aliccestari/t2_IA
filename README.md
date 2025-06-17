@@ -1,128 +1,66 @@
-# T2 - Aprendizagem por Reforço: RN + AG + Minimax
+# T2 - Aprendizagem por Reforço: Jogo da Velha com RN + AG + Minimax
 
-**PUCRS - Inteligência Artificial**  
-**Profa. Silvia Moraes**
+**Disciplina:** Inteligência Artificial - PUCRS  
+**Professora:** Silvia Moraes
 
-## Objetivo
+## Descrição
 
-Construir uma solução de IA usando aprendizagem por reforço que faça uma rede neural aprender a jogar o jogo da Velha.
-
-## Arquitetura
-
-A solução combina três componentes principais:
-- **Rede Neural MLP**: 2 camadas para tomada de decisão
-- **Algoritmo Genético**: evolui os pesos da rede neural (sem backpropagation)
-- **Minimax**: atua como "professor" com 3 níveis de dificuldade
-
-## Estrutura do Projeto
-
-```
-├── main.py                     # Arquivo principal
-├── requirements.txt            # Dependências
-├── README.md                  # Este arquivo
-├── src/
-│   ├── neural_network/
-│   │   └── mlp.py             # Rede Neural MLP
-│   ├── genetic_algorithm/
-│   │   └── genetic_algo.py    # Algoritmo Genético
-│   ├── minimax/
-│   │   └── minimax.py         # Minimax com 3 modos
-│   ├── game/
-│   │   ├── tic_tac_toe.py     # Lógica do jogo
-│   │   └── game_state.py      # Estado do jogo
-│   ├── training/
-│   │   └── trainer.py         # Coordenador de treinamento
-│   └── frontend/
-│       └── gui.py             # Interface gráfica
-└── tests/
-    └── test_basic.py          # Testes básicos
-```
-
-## Instalação
-
-1. Clone o repositório
-2. Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Execução
-
-### Interface Gráfica (padrão)
-```bash
-python main.py
-```
-
-### Interface Console
-```bash
-python main.py --mode console
-```
-
-## Modos de Funcionamento
-
-### 1. Usuário vs Minimax
-- Permite jogar contra o algoritmo Minimax
-- Configurável entre 3 dificuldades (fácil, médio, difícil)
-
-### 2. Treinamento: Rede Neural vs Minimax
-- A rede neural aprende jogando contra o Minimax
-- Evolução dos pesos via Algoritmo Genético
-- Visualização do progresso em tempo real
-
-### 3. Usuário vs Rede Neural
-- Jogue contra a rede neural treinada
-- Avaliação da performance da IA
-
-## Componentes Técnicos
-
-### Rede Neural MLP
-- **Entrada**: Estado do tabuleiro (9 posições)
-- **Camada Oculta**: 18 neurônios (configurável)
-- **Saída**: 9 neurônios (probabilidade para cada posição)
-- **Ativação**: Sigmoid
-
-### Algoritmo Genético
-- **Cromossomos**: Pesos da rede neural
-- **População**: 50 indivíduos (configurável)
-- **Seleção**: Elitismo + Torneio
-- **Cruzamento**: BLX-α para valores reais
-- **Mutação**: Gaussiana
-
-### Minimax
-- **Fácil**: 25% das jogadas usam minimax
-- **Médio**: 50% das jogadas usam minimax
-- **Difícil**: 100% das jogadas usam minimax
-
-## Desenvolvimento
-
-### TODO - Próximos Passos
-1. [ ] Implementar propagação da rede neural
-2. [ ] Implementar operadores do algoritmo genético
-3. [ ] Implementar algoritmo minimax com modos
-4. [ ] Implementar lógica completa do jogo da velha
-5. [ ] Implementar função de aptidão
-6. [ ] Implementar coordenador de treinamento
-7. [ ] Implementar interfaces (GUI e console)
-8. [ ] Implementar sistema de persistência
-9. [ ] Adicionar visualizações e estatísticas
-10. [ ] Testes e validação
-
-### Executar Testes
-```bash
-python -m pytest tests/
-# ou
-python tests/test_basic.py
-```
-
-## Critérios de Avaliação
-
-- **1,0 pt**: Adaptação do Minimax para os 3 modos
-- **2,0 pts**: Rede neural MLP e propagação
-- **2,0 pts**: Algoritmo genético completo
-- **1,5 pts**: Frontend com 3 modos funcionais
-- **2,5 pts**: Relatório de desenvolvimento
-- **1,0 pt**: Vídeo demonstrativo (máx 10min)
+Este projeto implementa uma IA capaz de aprender a jogar o jogo da velha usando uma Rede Neural (MLP) treinada por Algoritmo Genético, tendo o Minimax como "professor". O sistema permite jogar contra o Minimax, treinar a rede e jogar contra a rede treinada, tudo via interface de console.
 
 ## Autores
 
-Alice Colares, Mykelly Barros, Giovana Raupp, Samara Tavares
+- Alice Colares
+- Mykelly Barros
+- Giovana Raupp
+- Samara Tavares
+
+## Requisitos
+
+- Python 3.8+
+- numpy
+- matplotlib
+
+Instale as dependências com:
+```bash
+pip install -r requirements.txt
+```
+
+## Como Executar
+
+Para iniciar o sistema, execute:
+```bash
+python3 main.py
+```
+
+## Modos de Jogo
+
+Ao rodar o programa, escolha no menu:
+
+1. **Jogar contra o Minimax**  
+   - Escolha a dificuldade: fácil (25% Minimax), médio (50%), difícil (100%)
+2. **Treinar a Rede Neural**  
+   - A rede aprende jogando contra o Minimax, evoluindo via Algoritmo Genético
+   - O progresso do treinamento é exibido no console
+3. **Jogar contra a Rede Neural Treinada**  
+   - Após o treinamento, jogue contra a IA e veja sua performance
+
+## Estrutura Técnica (resumido)
+
+- **Rede Neural:** MLP de 2 camadas (entrada: 9, oculta: 18, saída: 9)
+- **Algoritmo Genético:** Evolve os pesos da rede (BLX-α, mutação gaussiana, elitismo)
+- **Minimax:** 3 níveis de dificuldade, serve como adversário/professor
+
+## Como Treinar e Testar a Rede
+
+1. Escolha a opção "Treinar a rede" no menu.
+2. O sistema irá evoluir a rede por várias gerações.
+3. Após o treino, escolha "Jogar contra a rede treinada" para testar a IA.
+
+Os pesos da melhor rede são salvos automaticamente na pasta `checkpoints/`.
+
+## Observações
+
+- O projeto não possui interface gráfica, apenas console.
+- Para dúvidas, consulte o relatório entregue junto ao projeto.
+
+---

@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+
 
 class GeneticAlgorithm:
     """
@@ -9,15 +11,6 @@ class GeneticAlgorithm:
     
     def __init__(self, population_size=200, chromosome_length=None, 
                  mutation_rate=0.1, crossover_rate=0.8, elitism_rate=0.1):
-        """
-        Inicializa o Algoritmo Genético
-        Args:
-            population_size: tamanho da população
-            chromosome_length: tamanho do cromossomo (total de pesos da rede)
-            mutation_rate: taxa de mutação
-            crossover_rate: taxa de cruzamento
-            elitism_rate: taxa de elitismo
-        """
         self.population_size = population_size
         self.chromosome_length = chromosome_length
         self.mutation_rate = mutation_rate
@@ -31,40 +24,17 @@ class GeneticAlgorithm:
         self.mean_fitness_history = []
         
     def initialize_population(self):
-        """
-        Cria a população inicial com pesos aleatórios
-        """
         self.population = [np.random.uniform(-1, 1, self.chromosome_length) for _ in range(self.population_size)]
         self.fitness_scores = [0.0 for _ in range(self.population_size)]
         print(f"População inicializada com {self.population_size} cromossomos.")
 
     def evaluate_fitness(self, neural_network, minimax_player, game, games_per_chromosome=5):
-        """
-        Avalia a aptidão de toda a população
-        Args:
-            neural_network: instância da rede neural (MLP)
-            minimax_player: jogador minimax (ou adversário aleatório para teste)
-            game: instância do jogo da velha
-            games_per_chromosome: número de partidas por cromossomo
-        """
         self.fitness_scores = []
         for chromosome in self.population:
             fitness = self.fitness_function(chromosome, neural_network, minimax_player, game, games_per_chromosome)
             self.fitness_scores.append(fitness)
 
     def fitness_function(self, chromosome, neural_network, minimax_player, game, games_per_chromosome=5):
-        """
-        Função de aptidão para um cromossomo individual
-        Mede desempenho da rede contra o minimax (ou adversário aleatório)
-        Args:
-            chromosome: cromossomo a ser avaliado
-            neural_network: rede neural
-            minimax_player: minimax opponent (ou aleatório)
-            game: jogo da velha
-            games_per_chromosome: número de partidas
-        Returns:
-            fitness: valor de aptidão
-        """
         # Parâmetros de pontuação (pode importar do config.py se preferir)
         WIN_REWARD = 15
         DRAW_REWARD = 3
@@ -110,9 +80,6 @@ class GeneticAlgorithm:
         return total_fitness / games_per_chromosome
     
     def selection_tournament(self, tournament_size=3):
-        """
-        Seleção por torneio
-        """
         selected = []
         for _ in range(self.population_size):
             participants = random.sample(list(enumerate(self.fitness_scores)), tournament_size)
@@ -121,18 +88,12 @@ class GeneticAlgorithm:
         return selected
 
     def selection_elitism(self):
-        """
-        Seleção por elitismo - mantém os melhores
-        """
         elite_count = int(self.elitism_rate * self.population_size)
         elite_indices = np.argsort(self.fitness_scores)[-elite_count:][::-1]
         elite = [self.population[i].copy() for i in elite_indices]
         return elite
     
     def crossover_real_valued(self, parent1, parent2, alpha=0.5):
-        """
-        Cruzamento BLX-α para valores reais
-        """
         offspring1 = parent1.copy()
         offspring2 = parent2.copy()
         for i in range(len(parent1)):
@@ -154,9 +115,6 @@ class GeneticAlgorithm:
 
     
     def evolve_generation(self, neural_network, minimax_player, game):
-        """
-        Executa uma geração completa do AG
-        """
         # Avalia fitness de toda a população
         self.evaluate_fitness(neural_network, minimax_player, game)
         new_population = []
@@ -186,16 +144,10 @@ class GeneticAlgorithm:
         self.mean_fitness_history.append(mean_fitness)
 
     def get_best_chromosome(self):
-        """
-        Retorna o melhor cromossomo da população atual
-        """
         best_idx = np.argmax(self.fitness_scores)
         return self.population[best_idx].copy()
 
     def get_statistics(self):
-        """
-        Retorna estatísticas da população atual
-        """
         stats = {
             'generation': self.generation,
             'best_fitness': float(np.max(self.fitness_scores)),
@@ -204,29 +156,3 @@ class GeneticAlgorithm:
         }
         return stats
     
-    def should_stop(self, max_generations=100, convergence_threshold=0.001):
-        """
-        Critério de parada do algoritmo
-        """
-        if self.generation >= max_generations:
-            return True
-        if len(self.best_fitness_history) >= 10:
-            recent = self.best_fitness_history[-10:]
-            if max(recent) - min(recent) < convergence_threshold:
-                return True
-        return False
-
-    def relu(self, x):
-        return np.maximum(0, x)
-
-    def plot_training_progress(self):
-        import matplotlib.pyplot as plt
-        generations = list(range(1, len(self.best_fitness_history) + 1))
-        plt.figure(figsize=(10, 5))
-        plt.plot(generations, self.best_fitness_history, label="Melhor Fitness")
-        plt.plot(generations, self.mean_fitness_history, label="Fitness Médio")
-        plt.title("Progresso do Treinamento")
-        plt.xlabel("Geração")
-        plt.ylabel("Fitness")
-        plt.legend()
-        plt.show() 

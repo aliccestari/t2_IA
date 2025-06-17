@@ -22,14 +22,6 @@ class TicTacToe:
         self.winner = None
     
     def make_move(self, position, player):
-        """
-        Executa uma jogada
-        Args:
-            position: posição no tabuleiro (0-8)
-            player: jogador (1 ou -1)
-        Returns:
-            success: se a jogada foi válida
-        """
         if not 0 <= position < 9:
             return False
         if self.board[position] != 0:
@@ -40,21 +32,9 @@ class TicTacToe:
         return True
     
     def is_valid_move(self, position):
-        """
-        Verifica se uma jogada é válida
-        Args:
-            position: posição no tabuleiro (0-8)
-        Returns:
-            valid: boolean
-        """
         return 0 <= position < 9 and self.board[position] == 0
     
     def check_winner(self):
-        """
-        Verifica se há um vencedor
-        Returns:
-            winner: 1, -1, 0 (empate) ou None (jogo continua)
-        """
         win_combinations = [
             (0, 1, 2), (3, 4, 5), (6, 7, 8),  # linhas
             (0, 3, 6), (1, 4, 7), (2, 5, 8),  # colunas
@@ -75,27 +55,12 @@ class TicTacToe:
         return None
     
     def is_game_over(self):
-        """
-        Verifica se o jogo terminou
-        Returns:
-            game_over: boolean
-        """
         return self.game_over
     
     def get_available_moves(self):
-        """
-        Retorna lista de movimentos válidos
-        Returns:
-            moves: lista de posições disponíveis
-        """
         return [i for i in range(9) if self.board[i] == 0]
     
     def get_board_copy(self):
-        """
-        Retorna cópia do tabuleiro atual
-        Returns:
-            board_copy: cópia do tabuleiro
-        """
         return self.board.copy()
     
     def print_board(self):
@@ -108,18 +73,8 @@ class TicTacToe:
                 print('-'*5)
     
     def board_to_string(self):
-        """
-        Converte tabuleiro para string
-        Returns:
-            board_str: representação string do tabuleiro
-        """
         symbols = {1: 'X', -1: 'O', 0: '.'}
         return ''.join([symbols[x] for x in self.board])
     
     def get_board_state_for_nn(self):
-        """
-        Retorna estado do tabuleiro normalizado para a rede neural
-        Returns:
-            state: array normalizado para entrada da rede
-        """
         return self.board.astype(float) 
